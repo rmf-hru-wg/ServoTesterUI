@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "ServoTesterUI"
+version = "0.1.0"
+description = ""
+authors = ["realteck-ky <32591276+realteck-ky@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "3.8.17"
+flet = "^0.22.0"
+pyserial = "^3.5"
+gs2d = "^0.0.4"
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.10.0"
+autopep8 = "^2.1.0"
+pylint = "^3.1.0"
+
+[[tool.mypy.overrides]]
+module = ['gs2d']
+ignore_missing_imports = true
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
