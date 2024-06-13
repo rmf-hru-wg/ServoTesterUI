@@ -1,9 +1,10 @@
 from enum import Enum, auto
 from dataclasses import dataclass
-import gs2d
-from gs2d import SerialInterface, Futaba
+
+from gs2d import SerialInterface, Futaba, KondoICS
 from typing import Type, Optional
 from time import sleep
+
 import threading
 
 class ServoProtocol(Enum):
@@ -11,11 +12,11 @@ class ServoProtocol(Enum):
     KONDO_ICS_30 = auto()
     KONDO_ICS_35 = auto()
     KONDO_ICS_36 = auto()
-    
+
     FUTABA_ROBOT = auto()
     FUTABA_SBUS_1 = auto()
     FUTABA_SBUS_2 = auto()
-    
+
     DYNAMIXEL_PROTO_1 = auto()
     DYNAMIXEL_PROTO_2 = auto()
 
@@ -39,17 +40,19 @@ def open_servo_if_by_proto(serial_if:SerialInterface, proto:ServoProtocol):
                 if self.command_handler:
                     self.command_handler.close()
         return FutabaServoDriver(serial_if)
-    elif proto == ServoProtocol.KONDO_ICS_30 | ServoProtocol.KONDO_ICS_35 | ServoProtocol.KONDO_ICS_36:
-        # TODO
+    elif proto == ServoProtocol.KONDO_ICS_36:
+        return KondoICS(serial_if, loopback=False)
+    elif proto == ServoProtocol.KONDO_ICS_20 | ServoProtocol.KONDO_ICS_30 | ServoProtocol.KONDO_ICS_35:
+        # return KondoICS(serial_if, version versionloopback=False)
         pass
 
 class Singleton:
     _instance = None
     _lock = threading.Lock()
-    
+
     def __new__(cls):
             raise NotImplementedError("ServoCommunication is a singletone class. Use get_instance()")
-    
+
     @classmethod
     def get_instance(cls):
         if not cls._instance:
@@ -60,7 +63,7 @@ class Singleton:
         return cls._instance
 
 
-class ServoCommunication(Singleton):    
+class ServoCommunication(Singleton):
     def __init__(self) -> None:
         self._serial_if: SerialInterface = None
         self._servo_if = None
@@ -93,12 +96,12 @@ class ServoCommunication(Singleton):
     @property
     def serial_path(self):
         return self._serial_path
-    
+
     @serial_path.setter
     def serial_path(self, serial_path:str):
         if serial_path != None:
             if self._servo_if != None:
-                self._servo_if.close()   
+                self._servo_if.close()
             if self._serial_if != None:
                 self._serial_if.close()
             sleep(0.2)
@@ -109,6 +112,6 @@ class ServoCommunication(Singleton):
                 self._servo_if = open_servo_if_by_proto(self._serial_if, self.servo_proto)
         self._serial_path = serial_path
 
-        
+
 
 

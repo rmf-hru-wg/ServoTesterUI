@@ -142,8 +142,11 @@ class ServoTab(ft.Tab):
     def send_servo(self, e):
         servo_if = self.servo_comm._servo_if
         for servo in self.servo_comm.servo_list:
-            servo_if.set_torque_enable(True, sid=servo.id)
-            servo_if.set_target_position(servo.target_angle, sid=servo.id)
+            sid = int(servo.id)
+            if not servo.is_power_on:
+                servo_if.set_torque_enable(True, sid=sid)
+                servo.is_power_on = True
+            servo_if.set_target_position(servo.target_angle, sid=sid)
 
     def sync_servo(self, e):
         e.control.selected = not e.control.selected

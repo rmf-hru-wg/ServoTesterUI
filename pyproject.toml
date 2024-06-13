@@ -7,10 +7,10 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "3.8.17"
+python = "~3.10.11"
 flet = "^0.22.0"
 pyserial = "^3.5"
-gs2d = "^0.0.4"
+gs2d = {path = "gs2d-python", develop = true}
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.10.0"
